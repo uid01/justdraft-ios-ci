@@ -27,9 +27,13 @@ jobs:
           npm run build
       - name: Capacitor iOS
         run: |
-          npm install --save-dev @capacitor/cli
+          npm install --save-dev @capacitor/cli@7.6.9
           npx cap add ios || true
           npx cap sync ios
+          find ios -name '*.xcworkspace' -o -name '*.xcodeproj' -o -name Podfile
+          if [ -f ios/App/Podfile ]; then
+            (cd ios/App && pod install)
+          fi
       - name: Verify App Store Connect Transporter login
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
