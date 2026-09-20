@@ -1,4 +1,4 @@
-﻿name: TestFlight
+name: TestFlight
 on:
   workflow_dispatch:
 jobs:
@@ -30,6 +30,7 @@ jobs:
           npm install --save-dev @capacitor/cli@7.6.9
           npx cap add ios || true
           npx cap sync ios
+          bash scripts/apply-ios-icon.sh
           find ios -name '*.xcworkspace' -o -name '*.xcodeproj' -o -name Podfile
           if [ -f ios/App/Podfile ]; then
             (cd ios/App && pod install)
