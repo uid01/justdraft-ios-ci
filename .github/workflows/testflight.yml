@@ -27,7 +27,7 @@ jobs:
           npm run build
       - name: Capacitor iOS
         run: |
-          npm install --save @capacitor/core @capacitor/ios
+          npm install --save-dev @capacitor/cli
           npx cap add ios || true
           npx cap sync ios
       - name: Fastlane TestFlight
