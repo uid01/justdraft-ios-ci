@@ -3,18 +3,26 @@ on:
   workflow_dispatch:
 jobs:
   probe:
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
-      - run: echo "macos hosted runner is available"
+      - run: echo "macos-26 hosted runner is available"
   ios:
     needs: probe
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
         with:
           repository: uid01/justdraft-mobile0
           token: ${{ secrets.MOBILE_REPO_TOKEN }}
           ref: cursor/justdraft-api-client-add3
+      - name: Select Xcode 26
+        run: |
+          latest=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          [ -z "$latest" ] && latest=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          echo "Selecting $latest"
+          sudo xcode-select -s "$latest"
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -40,7 +48,6 @@ jobs:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
         run: |
-          # App-specific passwords work with altool/Transporter, not developer.apple.com.
           xcrun altool --list-apps -u "$APPLE_ID" -p "$APPLE_APP_PASSWORD" || true
       - name: Fastlane TestFlight
         env:
